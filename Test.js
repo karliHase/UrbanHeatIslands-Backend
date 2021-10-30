@@ -6,7 +6,7 @@ const client = new Client({
   user: 'postgres',
   host: 'localhost',
   database: 'inno',
-  password: '',
+  password: '', // Eigenes Password verwenden
   port: '5432'
 });
 client.connect();
