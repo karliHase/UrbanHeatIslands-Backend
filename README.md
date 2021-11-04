@@ -1,8 +1,9 @@
 # UrbanHeatIslands-Backend
 backend
 
-1) `npm i` or `yarn`
-2) `npm start`
+1) `npm install`
+2) `npm install yarn`
+3) `npm start`
 
 # Requests
 `localhost:3000/getData/:bezirk`
