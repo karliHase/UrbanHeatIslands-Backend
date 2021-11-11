@@ -7,4 +7,8 @@ router.get("/getData/:bezirk", async (req, res) => {
   res.send(response);
 });
 
+router.get("/serverstatus", async (req, res) => {
+  res.send("running");
+});
+
 module.exports = router;
