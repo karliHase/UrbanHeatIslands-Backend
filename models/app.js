@@ -10,12 +10,13 @@ const client = new Client({
 });
 client.connect();
 
-// Startup();
+Startup();
 async function Startup() {
   var Stationen = await ConnectToDatabase();
   for (const item of Stationen) {
     var res = await ApiAbruf(item);
     if (res.status == 200) {
+     
       await UpdateDatabase(res);
     }
   }
@@ -44,27 +45,33 @@ async function ApiAbruf(ID) {
 
 async function UpdateDatabase(res) {
   try {
+    var speed =0; (res.data.observations[0].metric.windSpeed == NaN) ? speed =0 : speed = res.data.observations[0].metric.windSpeed; 
     //var text = "update station set temp ="+parsed+" where station_id ='"+res.data.observations[0].stationID.toLowerCase()+"';";
     var text =
-      "update station set temp =($1), windspeed=($2), neighborhood ='" +
+      "update station set temp =($1), windspeed=($2),lat=($3),lon=($4),pressure=($5),elevation=($6), neighborhood ='" +
       res.data.observations[0].neighborhood +
       "' where station_id ='" +
       res.data.observations[0].stationID +
       "';";
     var values = [
       parseInt(res.data.observations[0].metric.temp),
-      parseInt(res.data.observations[0].metric.windSpeed),
+      speed,
+      parseFloat(res.data.observations[0].lat),
+      parseFloat(res.data.observations[0].lon),
+      parseFloat(res.data.observations[0].metric.pressure),
+      parseInt(res.data.observations[0].metric.elev)
     ];
     var response = await client.query(text, values);
-    console.log(response);
+    
   } catch (err) {
     console.log(err);
   }
 }
 
-async function GetLocation(name) {
-  var text = "select * from station where neighborhood='" + name + "';";
-  var res = await client.query(text);
+async function GetLocation(bezik_id) {
+  var text = "select * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);";
+  var values = [parseInt(bezik_id)];
+  var res = await client.query(text,values);
   return res.rows;
 }
 
