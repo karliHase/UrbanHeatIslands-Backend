@@ -14,7 +14,8 @@ returns:<br>
 [<br>
 {<br>
 "station_id":"IOTTAK18",<br>
-"temp":7,"windspeed":7,<br>
+"temp":7,<br>
+"windspeed":7,<br>
 "neighborhood":"Ottakring",<br>
 "lon":"16.290072",<br>
 "elevation":102,<br>
