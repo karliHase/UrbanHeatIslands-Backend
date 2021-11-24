@@ -45,12 +45,12 @@ async function ApiAbruf(ID) {
 
 async function UpdateDatabase(res) {
   try {
-    var speed =0; (res.data.observations[0].metric.windSpeed == NaN) ? null : speed = res.data.observations[0].metric.windSpeed; 
-    var temp =0; (res.data.observations[0].metric.temp == NaN) ? null: temp = res.data.observations[0].metric.temp;
-    var lat = 0; (res.data.observations[0].lat == NaN) ? null: lat = parseFloat(res.data.observations[0].lat);
-    var lon = 0; (res.data.observations[0].lon == NaN) ? null: lon = parseFloat(res.data.observations[0].lon);
-    var pressure = 0; (res.data.observations[0].metric.pressure == NaN) ? null: pressure = parseFloat(res.data.observations[0].metric.pressure);
-    var elev = 0; (res.data.observations[0].metric.elev == NaN) ? null : elev = res.data.observations[0].metric.elev;
+    var speed =null; (res.data.observations[0].metric.windSpeed == null) ? null : speed = res.data.observations[0].metric.windSpeed; 
+    var temp =null; (res.data.observations[0].metric.temp == null) ? null: temp = res.data.observations[0].metric.temp;
+    var lat = null; (res.data.observations[0].lat == null) ? null: lat = parseFloat(res.data.observations[0].lat);
+    var lon = null; (res.data.observations[0].lon == null) ? null: lon = parseFloat(res.data.observations[0].lon);
+    var pressure = null; (res.data.observations[0].metric.pressure == null) ? null : pressure = parseFloat(res.data.observations[0].metric.pressure);
+    var elev = null; (res.data.observations[0].metric.elev == null) ? null : elev = res.data.observations[0].metric.elev;
 
     var text =
       "update station set temp =($1), windspeed=($2),lat=($3),lon=($4),pressure=($5),elevation=($6), neighborhood ='" +
