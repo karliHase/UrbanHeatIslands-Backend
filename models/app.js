@@ -5,7 +5,7 @@ const client = new Client({
   user: "postgres",
   host: "localhost",
   database: "inno",
-  password: "postgres", // Eigenes Password verwenden
+  password: "papa2001", // Eigenes Password verwenden
   port: "5432",
 });
 client.connect();
@@ -45,8 +45,13 @@ async function ApiAbruf(ID) {
 
 async function UpdateDatabase(res) {
   try {
-    var speed =0; (res.data.observations[0].metric.windSpeed == NaN) ? speed =0 : speed = res.data.observations[0].metric.windSpeed; 
-    //var text = "update station set temp ="+parsed+" where station_id ='"+res.data.observations[0].stationID.toLowerCase()+"';";
+    var speed =0; (res.data.observations[0].metric.windSpeed == NaN) ? null : speed = res.data.observations[0].metric.windSpeed; 
+    var temp =0; (res.data.observations[0].metric.temp == NaN) ? null: temp = res.data.observations[0].metric.temp;
+    var lat = 0; (res.data.observations[0].lat == NaN) ? null: lat = parseFloat(res.data.observations[0].lat);
+    var lon = 0; (res.data.observations[0].lon == NaN) ? null: lon = parseFloat(res.data.observations[0].lon);
+    var pressure = 0; (res.data.observations[0].metric.pressure == NaN) ? null: pressure = parseFloat(res.data.observations[0].metric.pressure);
+    var elev = 0; (res.data.observations[0].metric.elev == NaN) ? null : elev = res.data.observations[0].metric.elev;
+
     var text =
       "update station set temp =($1), windspeed=($2),lat=($3),lon=($4),pressure=($5),elevation=($6), neighborhood ='" +
       res.data.observations[0].neighborhood +
@@ -54,12 +59,12 @@ async function UpdateDatabase(res) {
       res.data.observations[0].stationID +
       "';";
     var values = [
-      parseInt(res.data.observations[0].metric.temp),
+      temp,
       speed,
-      parseFloat(res.data.observations[0].lat),
-      parseFloat(res.data.observations[0].lon),
-      parseFloat(res.data.observations[0].metric.pressure),
-      parseInt(res.data.observations[0].metric.elev)
+      lat,
+      lon,
+      pressure,
+      elev
     ];
     var response = await client.query(text, values);
     
@@ -75,6 +80,14 @@ async function GetLocation(bezik_id) {
   return res.rows;
 }
 
+async function Durchschnitt(bezik_id,getInfo)
+{
+  var text = `select AVG(${getInfo}) from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);`;
+  var values = [parseInt(bezik_id)];
+  var res = await client.query(text,values);
+  return res.rows[0].avg;
+}
+
 module.exports = {
-  GetLocation,
+  GetLocation, Durchschnitt,
 };
