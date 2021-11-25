@@ -5,7 +5,7 @@ const client = new Client({
   user: "postgres",
   host: "localhost",
   database: "inno",
-  password: "papa2001", // Eigenes Password verwenden
+  password: "postgres", // Eigenes Password verwenden
   port: "5432",
 });
 client.connect();
@@ -73,11 +73,20 @@ async function UpdateDatabase(res) {
   }
 }
 
-async function GetLocation(bezik_id) {
-  var text = "select * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);";
-  var values = [parseInt(bezik_id)];
-  var res = await client.query(text,values);
-  return res.rows;
+async function GetLocation(bezik_id) 
+{
+  if(bezik_id != "all")
+  {
+    var text = "select * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);";
+    var values = [parseInt(bezik_id)];
+    var res = await client.query(text,values);
+    return res.rows;
+  }else
+  {
+    var text = "select * from station s;";
+    var res = await client.query(text,values);
+    return res.rows;
+  }
 }
 
 async function Durchschnitt(bezik_id,getInfo)

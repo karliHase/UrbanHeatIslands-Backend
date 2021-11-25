@@ -3,13 +3,21 @@ var router = express.Router();
 const { GetLocation, Durchschnitt } = require("../models/app");
 
 router.get("/getData/:bezirk", async (req, res) => {
-
+  var response;
   if(req.params.bezirk > 23 || req.params.bezirk < 1)
   {
     res.send("400");
     return;
   }
-  var response = await GetLocation(req.params.bezirk);
+
+  if(req.params.bezirk.toLowerCase() =="all")
+  {
+    response = await GetLocation("all");
+    res.send(response);
+    return;
+  }
+  
+  response = await GetLocation(req.params.bezirk);
   res.send(response);
 });
 
