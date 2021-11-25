@@ -5,13 +5,15 @@ const client = new Client({
   user: "postgres",
   host: "localhost",
   database: "inno",
-  password: "postgres", // Eigenes Password verwenden
+  password: "papa2001", // Eigenes Password verwenden
   port: "5432",
 });
 client.connect();
 
-Startup();
-async function Startup() {
+
+RefreshDatenbank = async() => 
+{
+  console.log("Refreshing Datenbank");
   var Stationen = await ConnectToDatabase();
   for (const item of Stationen) {
     var res = await ApiAbruf(item);
@@ -20,10 +22,11 @@ async function Startup() {
       await UpdateDatabase(res);
     }
   }
-  console.log("Fertig");
+  console.log("Refreshing beendet");
 }
 
-async function ConnectToDatabase() {
+ConnectToDatabase= async() =>
+{
   const res = await client.query("select station_id from station");
   var arrayspeicher = new Array(res.rows.length);
   for (let index = 0; index < res.rows.length; index++) {
@@ -32,7 +35,8 @@ async function ConnectToDatabase() {
   return arrayspeicher;
 }
 
-async function ApiAbruf(ID) {
+ApiAbruf = async(ID) =>
+{
   try {
     const response = await axios.get(
       `http://api.weather.com/v2/pws/observations/current?apiKey=6532d6454b8aa370768e63d6ba5a832e&stationId=${ID.toUpperCase()}&format=json&units=m`
@@ -43,8 +47,10 @@ async function ApiAbruf(ID) {
   }
 }
 
-async function UpdateDatabase(res) {
-  try {
+UpdateDatabase = async(res) =>
+{
+  try 
+  {
     var speed =null; (res.data.observations[0].metric.windSpeed == null) ? null : speed = res.data.observations[0].metric.windSpeed; 
     var temp =null; (res.data.observations[0].metric.temp == null) ? null: temp = res.data.observations[0].metric.temp;
     var lat = null; (res.data.observations[0].lat == null) ? null: lat = parseFloat(res.data.observations[0].lat);
@@ -73,12 +79,12 @@ async function UpdateDatabase(res) {
   }
 }
 
-async function GetLocation(bezik_id) 
+GetLocation = async(bezirk_id) => 
 {
-  if(bezik_id != "all")
+  if(bezrik_id != "all")
   {
     var text = "select * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);";
-    var values = [parseInt(bezik_id)];
+    var values = [parseInt(bezirk_id)];
     var res = await client.query(text,values);
     return res.rows;
   }else
@@ -89,14 +95,33 @@ async function GetLocation(bezik_id)
   }
 }
 
-async function Durchschnitt(bezik_id,getInfo)
+getStation = async(Stationid) => {
+  var text = `select * from station where station_id='${Stationid}'`;
+  var res = await client.query(text);
+  return res.rows;
+};
+
+Durchschnitt = async(bezirk_id,getInfo) =>
 {
-  var text = `select AVG(${getInfo}) from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);`;
-  var values = [parseInt(bezik_id)];
-  var res = await client.query(text,values);
-  return res.rows[0].avg;
+  if(bezirk_id == "all")
+  {
+    var text = `select AVG(${getInfo.toUpperCase()}) from station s`;
+    var res = await client.query(text);
+    return res.rows[0].avg; 
+  }else
+  {
+    var text = `select AVG(${getInfo.toUpperCase()}) from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);`;
+    var values = [parseInt(bezirk_id)];
+    var res = await client.query(text,values);
+    return res.rows[0].avg;
+  }
 }
 
+setInterval(() =>{
+  RefreshDatenbank();
+},1000 * 60 * 60);
+
+
 module.exports = {
-  GetLocation, Durchschnitt,
+  GetLocation, Durchschnitt,getStation,
 };

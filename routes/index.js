@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { GetLocation, Durchschnitt } = require("../models/app");
+const { GetLocation, Durchschnitt,getStation } = require("../models/app");
 
 router.get("/getData/:bezirk", async (req, res) => {
   var response;
@@ -40,7 +40,10 @@ router.get("/getData/:bezirk/:info", async (req, res) => {
     }
     res.send(response);
 });
-
+router.get("/getStation/:Stationid", async (req, res) => {
+  var response = await getStation(req.params.Stationid);
+  res.send(response);
+});
 router.get("/serverstatus", async (req, res) => {
   res.send("200");
 });
