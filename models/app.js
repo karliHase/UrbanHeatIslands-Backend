@@ -81,7 +81,7 @@ UpdateDatabase = async(res) =>
 
 GetLocation = async(bezirk_id) => 
 {
-  if(bezrik_id != "all")
+  if(bezirk_id != "all")
   {
     var text = "select * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);";
     var values = [parseInt(bezirk_id)];
@@ -117,11 +117,20 @@ Durchschnitt = async(bezirk_id,getInfo) =>
   }
 }
 
+getStationInformation = async(Stationid,getInfo) =>{
+
+  var text = `select ${getInfo} from station s where station_id ='${Stationid}'`;
+  var res = await client.query(text);
+  return res.rows[0];
+}
+
+
+RefreshDatenbank();
 setInterval(() =>{
   RefreshDatenbank();
 },1000 * 60 * 60);
 
 
 module.exports = {
-  GetLocation, Durchschnitt,getStation,
+  GetLocation, Durchschnitt,getStation,getStationInformation
 };
