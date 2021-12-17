@@ -38,11 +38,11 @@ ALTER TABLE public.bezirk OWNER TO postgres;
 
 CREATE TABLE public.station (
     station_id character varying,
-    temp integer,
-    windspeed integer,
+    temp numeric,
+    windspeed numeric,
     neighborhood character varying,
     lon numeric,
-    elevation integer,
+    elevation numeric,
     lat numeric,
     pressure numeric
 );

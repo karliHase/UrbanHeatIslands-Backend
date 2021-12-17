@@ -5,7 +5,7 @@ const client = new Client({
   user: "postgres",
   host: "localhost",
   database: "inno",
-  password: "papa2001", // Eigenes Password verwenden
+  password: "postgres", // Eigenes Password verwenden
   port: "5432",
 });
 client.connect();
@@ -30,11 +30,11 @@ ConnectToDatabase = async () => {
   }
   return arrayspeicher;
 };
-
+// https://api.weather.com/v2/pws/observations/current?apiKey=6532d6454b8aa370768e63d6ba5a832e&stationId=${ID.toUpperCase()}&format=json&units=m
 ApiAbruf = async (ID) => {
   try {
     const response = await axios.get(
-      `http://api.weather.com/v2/pws/observations/current?apiKey=6532d6454b8aa370768e63d6ba5a832e&stationId=${ID.toUpperCase()}&format=json&units=m`
+      `https://api.weather.com/v2/pws/observations/current?apiKey=e1f10a1e78da46f5b10a1e78da96f525&stationId=${ID.toUpperCase()}&numericPrecision=decimal&format=json&units=m`
     );
     return response;
   } catch (err) {
@@ -47,11 +47,11 @@ UpdateDatabase = async (res) => {
     var speed = null;
     res.data.observations[0].metric.windSpeed == null
       ? null
-      : (speed = res.data.observations[0].metric.windSpeed);
+      : (speed = parseFloat(res.data.observations[0].metric.windSpeed));
     var temp = null;
     res.data.observations[0].metric.temp == null
       ? null
-      : (temp = res.data.observations[0].metric.temp);
+      : (temp = parseFloat(res.data.observations[0].metric.temp));
     var lat = null;
     res.data.observations[0].lat == null
       ? null
@@ -67,7 +67,7 @@ UpdateDatabase = async (res) => {
     var elev = null;
     res.data.observations[0].metric.elev == null
       ? null
-      : (elev = res.data.observations[0].metric.elev);
+      : (elev = parseFloat(res.data.observations[0].metric.elev));
 
     var text =
       "update station set temp =($1), windspeed=($2),lat=($3),lon=($4),pressure=($5),elevation=($6), neighborhood ='" +
