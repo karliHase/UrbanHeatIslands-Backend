@@ -58,4 +58,9 @@ router.get("/serverstatus", async (req, res) => {
   res.send("200");
   
 });
+
+router.get("/force", async (req, res) => {
+  myFunctions.Force();
+  res.send("200");
+});
 module.exports = router;

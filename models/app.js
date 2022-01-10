@@ -121,6 +121,11 @@ getStationInformation = async (Stationid, getInfo) => {
   return res.rows[0];
 };
 
+Force() = async () =>{
+  await RefreshDatenbank();
+}
+
+
 RefreshDatenbank();
 setInterval(() => {
   RefreshDatenbank();
