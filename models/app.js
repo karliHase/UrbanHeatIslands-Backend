@@ -121,7 +121,7 @@ getStationInformation = async (Stationid, getInfo) => {
   return res.rows[0];
 };
 
-Force() = async () =>{
+Force = async () =>{
   await RefreshDatenbank();
 }
 
@@ -136,4 +136,5 @@ module.exports = {
   Durchschnitt,
   getStation,
   getStationInformation,
+  Force,
 };
