@@ -17,10 +17,19 @@ RefreshDatenbank = async () => {
     var res = await ApiAbruf(item);
     if (res.status == 200) {
       await UpdateDatabase(res);
+    }else{
+      await DeleteOldData(item);
     }
   }
   console.log("Refreshing beendet");
 };
+
+DeleteOldData = async (ID) =>{
+  var text = "update station set temp = null,windspeed = 0,elevation = null, pressure = null, humidity = null, time = null where station_id = ($1)"
+  var value = [ID.toUpperCase()]
+  await client.query(text,value)
+}
+
 
 ConnectToDatabase = async () => {
   const res = await client.query("select station_id from station");
@@ -68,14 +77,18 @@ UpdateDatabase = async (res) => {
     res.data.observations[0].metric.elev == null
       ? null
       : (elev = parseFloat(res.data.observations[0].metric.elev));
-
+    var humidity = null;
+    res.data.observations[0].humidity == null
+      ? null
+      : (humidity = parseFloat(res.data.observations[0].humidity));
+    var time = res.data.observations[0].obsTimeLocal;
     var text =
-      "update station set temp =($1), windspeed=($2),lat=($3),lon=($4),pressure=($5),elevation=($6), neighborhood ='" +
+      "update station set temp =($1), windspeed=($2),lat=($3),lon=($4),pressure=($5),elevation=($6),humidity = ($7),time = ($8), neighborhood ='" +
       res.data.observations[0].neighborhood +
       "' where station_id ='" +
       res.data.observations[0].stationID +
       "';";
-    var values = [temp, speed, lat, lon, pressure, elev];
+    var values = [temp, speed, lat, lon, pressure, elev,humidity,time];
     var response = await client.query(text, values);
   } catch (err) {
     console.log(err);
