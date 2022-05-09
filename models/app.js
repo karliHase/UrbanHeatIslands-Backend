@@ -98,12 +98,12 @@ UpdateDatabase = async (res) => {
 GetLocation = async (bezirk_id) => {
   if (bezirk_id != "all") {
     var text =
-      "select distinct * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);";
+      "select distinct * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1) and s.temp notnull;";
     var values = [parseInt(bezirk_id)];
     var res = await client.query(text, values);
     return res.rows;
   } else {
-    var text = "select distinct * from station s;";
+    var text = "select distinct * from station s where s.temp notnull;";
     var res = await client.query(text, values);
     return res.rows;
   }
@@ -117,11 +117,11 @@ getStation = async (Stationid) => {
 
 Durchschnitt = async (bezirk_id, getInfo) => {
   if (bezirk_id == "all") {
-    var text = `select AVG(${getInfo.toUpperCase()}) from station s`;
+    var text = `select AVG(${getInfo.toUpperCase()}) from station s where s.temp notnull`;
     var res = await client.query(text);
     return res.rows[0].avg;
   } else {
-    var text = `select AVG(${getInfo.toUpperCase()}) from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1);`;
+    var text = `select AVG(${getInfo.toUpperCase()}) from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1) and s.temp notnull`;
     var values = [parseInt(bezirk_id)];
     var res = await client.query(text, values);
     return res.rows[0].avg;
