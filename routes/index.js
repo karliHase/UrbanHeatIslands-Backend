@@ -23,9 +23,9 @@ router.get("/getData/:bezirk", async (req, res) => {
 });
 
 router.get("/getData/:bezirk/:info", async (req, res) => {
- 
+ //humidity
   var response;
-  if(req.params.info.toLowerCase() == "temp" || req.params.info.toLowerCase() == "pressure" || req.params.info.toLowerCase() == "windspeed" || req.params.info.toLowerCase() == "elevation")
+  if(req.params.info.toLowerCase() == "temp" || req.params.info.toLowerCase() == "pressure" || req.params.info.toLowerCase() == "windspeed" || req.params.info.toLowerCase() == "elevation"|| req.params.info.toLowerCase() == "humidity")
     {
         response = await myFunctions.Durchschnitt(req.params.bezirk,req.params.info.toLowerCase());
     }else
@@ -43,7 +43,7 @@ router.get("/getStation/:Stationid", async (req, res) => {
 
 router.get("/getStation/:Stationid/:info", async (req, res) => {
   var response;
-    if(req.params.info.toLowerCase() == "temp" || req.params.info.toLowerCase() == "pressure" || req.params.info.toLowerCase() == "windspeed" || req.params.info.toLowerCase() == "elevation")
+    if(req.params.info.toLowerCase() == "temp" || req.params.info.toLowerCase() == "pressure" || req.params.info.toLowerCase() == "windspeed" || req.params.info.toLowerCase() == "elevation" || req.params.info.toLowerCase() == "humidity")
     {
         response = await myFunctions.getStationInformation(req.params.Stationid,req.params.info.toLowerCase());
     }else
