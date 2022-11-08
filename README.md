@@ -57,3 +57,6 @@ Example:
 `http://localhost:3000/getStation/IMEIDL17/temp`<br>
 retunrs: <br>
 temp":4<br>
+<br>
+# Station with Bugs
+ILEOPO82
