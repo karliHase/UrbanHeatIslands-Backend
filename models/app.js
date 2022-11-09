@@ -106,7 +106,8 @@ UpdateDatabase = async (res) => {
       "';";
     var values = [temp, speed, lat, lon, pressure, elev,humidity,time];
     var response = await client.query(text, values);
-  } catch (err) {
+  } catch (err) 
+  {
     console.log(err);
   }
 };
@@ -115,17 +116,23 @@ UpdateDatabase = async (res) => {
 GetLocation = async (bezirk_id) => {
   // Wir überprüfen zuerst ob wir den Text all bekommen haben
   // wenn nicht dann führen wir eine query aus die die Daten von jeder Station in einem Bezirk welches angegeben wurde zurück gibt
-  if (bezirk_id != "all") {
-    var text =
-      "select distinct * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1) and s.temp notnull;";
-    var values = [parseInt(bezirk_id)];
-    var res = await client.query(text, values);
-    return res.rows;
-    // Wenn all eingebeben wurde wird jede Information von jeder Station zurück gegeben.
-  } else {
+  if (bezirk_id == "all") 
+  {
+ 
     var text = "select distinct * from station s where s.temp notnull;";
     var res = await client.query(text, values);
     return res.rows;
+    // Wenn all eingebeben wurde wird jede Information von jeder Station zurück gegeben.
+  } else if (bezirk_id > 0 && bezirk_id < 24)
+  {
+    var text =
+    "select distinct * from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1) and s.temp notnull;";
+  var values = [parseInt(bezirk_id)];
+  var res = await client.query(text, values);
+  return res.rows;
+  }else
+  {
+    return undefined;
   }
 };
 // MIt dieser Funktionen bekommen wir Daten von einer Station 
@@ -136,16 +143,22 @@ getStation = async (Stationid) => {
 };
 // Diese MEthode gibt den Durchschnitt von verschiedensten sachen zurück (Temepratur,Feuchtigkeit etc)
 Durchschnitt = async (bezirk_id, getInfo) => {
-  if (bezirk_id == "all") {
+  if (bezirk_id == "all") 
+  {
     var text = `select AVG(${getInfo.toUpperCase()}) from station s where s.temp notnull`;
     var res = await client.query(text);
     return res.rows[0].avg;
     // Wir können das wieder Bezirks orientiert machen oder wieder all eingeben und den Durschnitt für alle Stationen ausrechnen 
-  } else {
+  } else if(bezirk_id > 0 && bezirk_id < 24) 
+  {
     var text = `select AVG(${getInfo.toUpperCase()}) from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1) and s.temp notnull`;
     var values = [parseInt(bezirk_id)];
     var res = await client.query(text, values);
     return res.rows[0].avg;
+  }
+  else
+  {
+    return undefined;
   }
 };
 // Mit getStationInformation können wir eine bestimmte Information von einer station abrufen Beispiel: Temperatur

@@ -1,14 +1,16 @@
 var express = require("express");
 var router = express.Router();
 var myFunctions = require("../models/app");
+
+const bad_request = {"ERR":"400 Bad Request"};
 // Mit dieser Route/Funktion können Daten von bestimmten Bezirken oder von allen Bezirken abgerufen werden.
 router.get("/getData/:bezirk", async (req, res) => {
   var response;
   // Wir überprüfen zu erst ob, wir eine richtige Bezirksnummer erhalten haben, wenn nicht schicken wird den statuscode von 400 zurück.
   if(req.params.bezirk > 23 || req.params.bezirk < 1)
   {
-    response = {"ERR":"400 Bad Request"};
-    res.send(response);
+    
+    res.send(bad_request);
     return;
   }
 // Wenn wir all oder einer Zahl zwischen 1und 23 erhalten haben, rufen wir die Methode GetLocation auf und erhalten die Daten der Beirke
@@ -21,6 +23,11 @@ router.get("/getData/:bezirk", async (req, res) => {
   }
   
   response = await myFunctions.GetLocation(req.params.bezirk);
+  if(response == undefined)
+  {
+    res.send(bad_request)
+    return;
+  }
   res.send(response);
 });
 // Bestimmte Daten von Bezirken abrufen
@@ -37,16 +44,17 @@ router.get("/getData/:bezirk/:info", async (req, res) => {
         response = await myFunctions.Durchschnitt(req.params.bezirk,req.params.info.toLowerCase());
     }else
     {
-      response = {"ERR":"400 Bad Request"};
+      res.send(bad_request);
+      return;
     }
-    (response == undefined) ? response = {"ERR":"400 Bad Request"}: null;
+    (response == undefined) ? response = bad_request: null;
     res.send(response);
 });
 // Daten von einer bestimmten Station zu bekommen
 router.get("/getStation/:Stationid", async (req, res) => {
   var response = await myFunctions.getStation(req.params.Stationid);
   // Wemm wir als response keine Daten erhalten dann wurde die StationId falsch eingegeben und mit dem StatusCode 400 geantwortet
-  (response.length == 0) ? response = {"ERR":"400 Bad Request"} : null;
+  (response.length == 0) ? response = bad_request : null;
   res.send(response);
 });
 // Bestimmte daten einer Station zu bekommen
@@ -58,9 +66,10 @@ router.get("/getStation/:Stationid/:info", async (req, res) => {
         response = await myFunctions.getStationInformation(req.params.Stationid,req.params.info.toLowerCase());
     }else
     {
-      response = {"ERR":"400 Bad Request"};
+      res.send(bad_request);
+      return;
     }
-    (response == undefined) ? response = {"ERR":"400 Bad Request"}: null;
+    (response == undefined) ? response = bad_request: null;
   res.send(response);
 });
 // Den Serverstatus zu bekommen ob er grad down ist oder nicht
