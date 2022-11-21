@@ -10,6 +10,13 @@ const client = new Client({
   password: "postgres", // Eigenes Password verwenden
   port: "5432",
 });
+/*const client = new Client({
+  user: "uhi_w3",
+  host: "localhost",
+  database: "uhi_w3_cs_technikum_wien_at",
+  password: "zzJFYXaumgFS46E1Jd6K0o8PntCRTGGRLEb2TD2O", // Eigenes Password verwenden
+  port: "5432",
+});*/
 // Die Verbindung zu Datenbank wird mit der Methode Connect aufgebaut
 client.connect();
 
@@ -143,16 +150,17 @@ getStation = async (Stationid) => {
 };
 // Diese MEthode gibt den Durchschnitt von verschiedensten sachen zurück (Temepratur,Feuchtigkeit etc)
 Durchschnitt = async (bezirk_id, getInfo) => {
+  var text = ""
   if (bezirk_id == "all") 
   {
-    var text = `select AVG(${getInfo.toUpperCase()}) from station s where s.temp notnull`;
+    text = `select AVG(${getInfo}) from station s where s.${getInfo} notnull`;
     var res = await client.query(text);
     return res.rows[0].avg;
     // Wir können das wieder Bezirks orientiert machen oder wieder all eingeben und den Durschnitt für alle Stationen ausrechnen 
   } else if(bezirk_id > 0 && bezirk_id < 24) 
   {
-    var text = `select AVG(${getInfo.toUpperCase()}) from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1) and s.temp notnull`;
     var values = [parseInt(bezirk_id)];
+    text = `select AVG(${getInfo}) from station s join bezirk b on(s.station_id = b.station_id) where bezirk_id =($1) and s.${getInfo} notnull`;
     var res = await client.query(text, values);
     return res.rows[0].avg;
   }
@@ -174,6 +182,7 @@ Force = async () =>{
 
 // Updatet die Datenbank jede Stunde 
 RefreshDatenbank();
+
 setInterval(() => {
   RefreshDatenbank();
 }, 1000 * 60 * 60);
