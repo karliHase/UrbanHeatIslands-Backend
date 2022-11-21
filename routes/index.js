@@ -82,4 +82,10 @@ router.get("/force", async (req, res) => {
   myFunctions.Force();
   res.send("200");
 });
+
+router.get("/getHistory", async (req,res) =>{
+    var response = await myFunctions.getHistory();
+    
+    res.send(response)
+})
 module.exports = router;
