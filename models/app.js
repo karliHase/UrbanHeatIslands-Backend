@@ -113,6 +113,9 @@ UpdateDatabase = async (res) => {
       "';";
     var values = [temp, speed, lat, lon, pressure, elev,humidity,time];
     var response = await client.query(text, values);
+    text ="insert into history (station_id,temp,windspeed,elevation,pressure,humidity,time) values (($1),($2),($3),($4),($5),($6),($7));"
+    values =[String(res.data.observations[0].stationID),temp,speed,pressure,elev,humidity,time]
+    response = await client.query(text,values);
   } catch (err) 
   {
     console.log(err);
