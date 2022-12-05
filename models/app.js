@@ -194,7 +194,12 @@ getHistory = async () =>{
   console.log(res.rows)
   return res.rows;
 }
-
+getHistoryStation = async (Stationid) =>{
+  var text =`select * from history where temp notnull and station_id ='${Stationid}';`
+  var res = await client.query(text);
+  console.log(res.rows)
+  return res.rows;
+}
 
 // Updatet die Datenbank jede Stunde 
 RefreshDatenbank();
@@ -210,4 +215,5 @@ module.exports = {
   getStationInformation,
   Force,
   getHistory,
+  getHistoryStation,
 };

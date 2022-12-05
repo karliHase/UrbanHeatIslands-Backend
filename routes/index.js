@@ -85,7 +85,12 @@ router.get("/force", async (req, res) => {
 
 router.get("/getHistory", async (req,res) =>{
     var response = await myFunctions.getHistory();
-    
     res.send(response)
+})
+router.get("/getHistory/:Stationid", async (req,res) =>{
+  var response = await myFunctions.getHistoryStation(req.params.Stationid)
+  response == "" ? response = bad_request : null
+  res.send(response)
+  
 })
 module.exports = router;
