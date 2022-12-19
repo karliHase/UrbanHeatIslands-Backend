@@ -3,20 +3,22 @@ const { Client } = require("pg");
 
 // Die Connections zur Datenbank 
 // ConnectionString
+/*
 const client = new Client({
   user: "postgres",
   host: "localhost",
   database: "inno",
   password: "postgres", // Eigenes Password verwenden
   port: "5432",
-});
-/*const client = new Client({
+});*/
+
+const client = new Client({
   user: "uhi_w3",
   host: "localhost",
   database: "uhi_w3_cs_technikum_wien_at",
   password: "zzJFYXaumgFS46E1Jd6K0o8PntCRTGGRLEb2TD2O", // Eigenes Password verwenden
   port: "5432",
-});*/
+});
 // Die Verbindung zu Datenbank wird mit der Methode Connect aufgebaut
 client.connect();
 
@@ -119,7 +121,7 @@ UpdateDatabase = async (res) => {
     if(timenow.getHours() == 12 || timenow.getHours()== 0)
     {
     text ="insert into history (station_id,temp,windspeed,elevation,pressure,humidity,time) values (($1),($2),($3),($4),($5),($6),($7));"
-    values =[String(res.data.observations[0].stationID),temp,speed,pressure,elev,humidity,time]
+    values =[String(res.data.observations[0].stationID),temp,speed,elev,pressure,humidity,time]
     response = await client.query(text,values);
     }
   } catch (err) 
@@ -191,7 +193,6 @@ Force = async () =>{
 getHistory = async () =>{
   var text ="select * from history where temp notnull;"
   var res = await client.query(text);
-  console.log(res.rows)
   return res.rows;
 }
 getHistoryStation = async (Stationid) =>{
